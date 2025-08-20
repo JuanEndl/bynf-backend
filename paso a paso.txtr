@@ -1,0 +1,72 @@
+1) crear una carpeta 
+    mkdir inventario-backend
+
+2) pararse en la carpeta creada 
+    cd inventario-backend
+
+3) ejecutar el comnado siguente (-y significa si a todo)
+    npm init -y
+
+4) ejecutar el siguente comando 
+    npm install express mysql2 cors
+
+5) pegar le siguiente codigo en el servidor backend
+
+const express = require("express");
+const cors = require("cors");
+const mysql = require("mysql2");
+
+const app = express();
+const PORT = 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Conexión a MySQL
+const db = mysql.createConnection({
+  host: "localhost",  // o la IP de tu servidor MySQL
+  user: "root", // cambia por tu usuario MySQL
+  password: "Root.432$", // cambia por tu contraseña
+  database: "bigotesynaricesfrias" // cambia por el nombre de tu base de datos
+});
+
+// Verificar conexión
+db.connect((err) => {
+  if (err) {
+    console.error("Error al conectar a MySQL:", err);
+    return;
+  }
+  console.log("Conectado a MySQL");
+});
+
+// Ruta para traer todos los productos
+app.get("/productos", (req, res) => {
+  db.query("select p.id, concat(p.description, ' ', pp.peso) as descripcion, concat('$',' ', p.precioCompra) as precioCompra, concat('$',' ', p.precioVenta) as precioVenta, m.marca, a.animales from productos p inner join animales a on (a.idAnimal = p.idAnimal) inner join marcas m on (m.idMarca = p.idMarca) left join edadanimal e on (e.idEdadAnimal = p.idEdadAnimal) inner join pesoproducto pp on (pp.idPeso = p.IdpesoProducto) order by p.id limit 130;", (err, results) => {
+    if (err) {
+      console.error("Error en la consulta:", err);
+      res.status(500).json({ error: "Error en la consulta a la base de datos" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Arrancar servidor
+app.listen(PORT, () => {
+  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+});
+
+
+6) en el frontend colocar en una constante
+
+  const url = "http://localhost:5000/productos";
+
+7) hacer un fech a la constante url para que traiga los datos
+
+  const mostrarDatos = async () => {
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    setProductos(datos);
+    setResultado(datos);
+  };
