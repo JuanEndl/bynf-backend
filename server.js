@@ -28,7 +28,7 @@ db.connect((err) => {
 
 // Ruta para traer todos los productos
 app.get("/productos", (req, res) => {
-  db.query("select p.id, concat(p.description, ' ', pp.peso) as descripcion, concat('$',' ', p.precioCompra) as precioCompra, concat('$',' ', p.precioVenta) as precioVenta, m.marca, a.animales from productos p inner join animales a on (a.idAnimal = p.idAnimal) inner join marcas m on (m.idMarca = p.idMarca) left join edadanimal e on (e.idEdadAnimal = p.idEdadAnimal) inner join pesoproducto pp on (pp.idPeso = p.IdpesoProducto) order by p.id limit 20;", (err, results) => {
+  db.query("select p.id, concat(p.description, ' ', pp.peso) as descripcion, concat('$',' ', p.precioCompra) as precioCompra, concat('$',' ', p.precioVenta) as precioVenta, m.marca, a.animales from productos p inner join animales a on (a.idAnimal = p.idAnimal) inner join marcas m on (m.idMarca = p.idMarca) left join edadanimal e on (e.idEdadAnimal = p.idEdadAnimal) inner join pesoproducto pp on (pp.idPeso = p.IdpesoProducto) order by p.id limit 130;", (err, results) => {
     if (err) {
       console.error("Error en la consulta:", err);
       res.status(500).json({ error: "Error en la consulta a la base de datos" });
@@ -40,5 +40,5 @@ app.get("/productos", (req, res) => {
 
 // Arrancar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en http://localhost:${PORT}/productos`);
+  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });
