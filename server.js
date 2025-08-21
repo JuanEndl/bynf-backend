@@ -26,7 +26,7 @@ db.connect((err) => {
   console.log("Conectado a MySQL");
 });
 
-// Ruta para traer todos los productos
+// Ruta para traer todos los productos + guardado de la query en una variable constante
 app.get("/productos", (req, res) => {
   const query = `
 
