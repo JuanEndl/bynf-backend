@@ -36,7 +36,7 @@ select
   concat(p.description, ' ', pp.peso) as descripcion,
   m.marca,
   a.animales,
-  concat('$',' ', p.precioCompra) as precioCompra,
+  concat('$',' ', ROUND (p.precioCompra)) as precioCompra,
   concat('$', ' ', ROUND (p.precioCompra * 1.25)) as precioVenta
 
 from productos p 
