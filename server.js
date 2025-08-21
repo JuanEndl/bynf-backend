@@ -28,7 +28,27 @@ db.connect((err) => {
 
 // Ruta para traer todos los productos
 app.get("/productos", (req, res) => {
-  db.query("select p.id, concat(p.description, ' ', pp.peso) as descripcion, concat('$',' ', p.precioCompra) as precioCompra, concat('$',' ', p.precioVenta) as precioVenta, m.marca, a.animales from productos p inner join animales a on (a.idAnimal = p.idAnimal) inner join marcas m on (m.idMarca = p.idMarca) left join edadanimal e on (e.idEdadAnimal = p.idEdadAnimal) inner join pesoproducto pp on (pp.idPeso = p.IdpesoProducto) order by p.id limit 130;", (err, results) => {
+  const query = `
+
+select
+
+  p.id,
+  concat(p.description, ' ', pp.peso) as descripcion,
+  m.marca,
+  a.animales,
+  concat('$',' ', p.precioCompra) as precioCompra,
+  concat('$', ' ', ROUND (p.precioCompra * 1.25)) as precioVenta
+
+from productos p 
+
+	inner join animales a on (a.idAnimal = p.idAnimal)
+	inner join marcas m on (m.idMarca = p.idMarca)
+	left join edadanimal e on (e.idEdadAnimal = p.idEdadAnimal)
+	inner join pesoproducto pp on (pp.idPeso = p.IdpesoProducto)
+
+	order by p.id limit 400;`
+  
+  db.query(query, (err, results) => {
     if (err) {
       console.error("Error en la consulta:", err);
       res.status(500).json({ error: "Error en la consulta a la base de datos" });
