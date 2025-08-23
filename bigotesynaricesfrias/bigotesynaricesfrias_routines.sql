@@ -18,28 +18,12 @@ USE `bigotesynaricesfrias`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `edadanimal`
+-- Dumping events for database 'bigotesynaricesfrias'
 --
 
-DROP TABLE IF EXISTS `edadanimal`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `edadanimal` (
-  `idEdadAnimal` int NOT NULL AUTO_INCREMENT,
-  `EdadAnimal` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`idEdadAnimal`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
--- Dumping data for table `edadanimal`
+-- Dumping routines for database 'bigotesynaricesfrias'
 --
-
-LOCK TABLES `edadanimal` WRITE;
-/*!40000 ALTER TABLE `edadanimal` DISABLE KEYS */;
-INSERT INTO `edadanimal` VALUES (1,'Cachorro'),(2,'Adulto'),(3,'Viejo');
-/*!40000 ALTER TABLE `edadanimal` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
