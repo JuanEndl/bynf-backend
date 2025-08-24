@@ -70,3 +70,31 @@ app.listen(PORT, () => {
     setProductos(datos);
     setResultado(datos);
   };
+
+============================================
+
+agredado de las variables de entorno
+
+1) instalar npm install dotenv para poder leer los archivos .env
+
+2) crear la carpeta .env en el archivo raiz 
+
+  # Archivo .env
+  DB_HOST=localhost // colcoar el host
+  DB_USER=root // colcoar el usuario 
+  DB_PASSWORD=Root.432$ // colocar la clave
+  DB_NAME=bigotesynaricesfrias // colocar la db
+  PORT=5000 // colocar el puerto
+
+3) colocar las variasbles 
+
+  a) require('dotenv').config(); // carga las variables del .env || colcoar para que pueda buscar las variables
+
+  b) // Conexión a MySQL
+  const db = mysql.createConnection({
+    host: process.env.DB_HOST,  // o la IP de tu servidor MySQL
+    user: process.env.DB_USER, // cambia por tu usuario MySQL
+    password: process.env.DB_PASSWORD, // cambia por tu contraseña
+    database: process.env.DB_NAME // cambia por el nombre de tu base de datos
+  });
+
