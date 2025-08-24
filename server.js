@@ -1,3 +1,4 @@
+require('dotenv').config(); // carga las variables del .env
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
@@ -11,10 +12,10 @@ app.use(express.json());
 
 // Conexión a MySQL
 const db = mysql.createConnection({
-  host: "localhost",  // o la IP de tu servidor MySQL
-  user: "root", // cambia por tu usuario MySQL
-  password: "Root.432$", // cambia por tu contraseña
-  database: "bigotesynaricesfrias" // cambia por el nombre de tu base de datos
+  host: process.env.DB_HOST,  // o la IP de tu servidor MySQL
+  user: process.env.DB_USER, // cambia por tu usuario MySQL
+  password: process.env.DB_PASSWORD, // cambia por tu contraseña
+  database: process.env.DB_NAME // cambia por el nombre de tu base de datos
 });
 
 // Verificar conexión
