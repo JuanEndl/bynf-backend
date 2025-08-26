@@ -59,7 +59,30 @@ from productos p
   });
 });
 
+
+// Modificar producto desde el backend
+
+app.put("/productos/:id", (req, res) => {
+  const { id } = req.params; // id del producto desde la URL
+  const { precioCompra } = req.body; // nuevo precio
+
+  const queryUpdate = `UPDATE productos SET precioCompra = ? WHERE id = ?`; // query que hace el update
+
+  db.query(queryUpdate, [precioCompra, id], (err, result) => {
+    if (err) {
+      console.error("Error al actualizar:", err);
+      res.status(500).json({ error: "Error al actualizar el producto" });
+    } else {
+      res.json({ mensaje: "Producto actualizado correctamente" });
+    }
+  });
+});
+
+
+
 // Arrancar servidor
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });
+
+
