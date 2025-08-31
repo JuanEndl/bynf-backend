@@ -10,45 +10,52 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// Conexión a MySQL
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,  // o la IP de tu servidor MySQL
-  user: process.env.DB_USER, // cambia por tu usuario MySQL
-  password: process.env.DB_PASSWORD, // cambia por tu contraseña
-  database: process.env.DB_NAME // cambia por el nombre de tu base de datos
+// Conexión a MySQL usando pool
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-// Verificar conexión
-db.connect((err) => {
-  if (err) {
-    console.error("Error al conectar a MySQL:", err);
-    return;
-  }
-  console.log("Conectado a MySQL");
-});
+// Función para esperar a que MySQL esté listo
+const waitForDb = () => {
+  return new Promise((resolve) => {
+    const check = () => {
+      db.query("SELECT 1", (err) => {
+        if (err) {
+          console.log("Esperando a que MySQL esté listo...");
+          setTimeout(check, 2000); // reintenta cada 2 segundos
+        } else {
+          resolve();
+        }
+      });
+    };
+    check();
+  });
+};
 
-// Ruta para traer todos los productos + guardado de la query en una variable constante
+// Rutas
 app.get("/productos", (req, res) => {
   const query = `
-
-select
-
-  p.id,
-  concat(p.description, ' ', pp.peso) as descripcion,
-  m.marca,
-  a.animales,
-  ROUND (p.precioCompra) as precioCompra,
-  ROUND (p.precioCompra * 1.25) as precioVenta
-
-from productos p 
-
-	inner join animales a on (a.idAnimal = p.idAnimal)
-	inner join marcas m on (m.idMarca = p.idMarca)
-	left join edadanimal e on (e.idEdadAnimal = p.idEdadAnimal)
-	inner join pesoproducto pp on (pp.idPeso = p.IdpesoProducto)
-
-	order by p.id limit 400;`
-  
+    SELECT
+      p.id,
+      CONCAT(p.description, ' ', pp.peso) AS descripcion,
+      m.marca,
+      a.animales,
+      ROUND(p.precioCompra) AS precioCompra,
+      ROUND(p.precioCompra * 1.25) AS precioVenta
+    FROM productos p
+      INNER JOIN animales a ON a.idAnimal = p.idAnimal
+      INNER JOIN marcas m ON m.idMarca = p.idMarca
+      LEFT JOIN edadanimal e ON e.idEdadAnimal = p.idEdadAnimal
+      INNER JOIN pesoproducto pp ON pp.idPeso = p.IdpesoProducto
+    ORDER BY p.id
+    LIMIT 400;
+  `;
   db.query(query, (err, results) => {
     if (err) {
       console.error("Error en la consulta:", err);
@@ -59,15 +66,11 @@ from productos p
   });
 });
 
-
-// Modificar producto desde el backend
-
 app.put("/productos/:id", (req, res) => {
-  const { id } = req.params; // id del producto desde la URL
-  const { precioCompra } = req.body; // nuevo precio
+  const { id } = req.params;
+  const { precioCompra } = req.body;
 
-  const queryUpdate = `UPDATE productos SET precioCompra = ? WHERE id = ?`; // query que hace el update
-
+  const queryUpdate = `UPDATE productos SET precioCompra = ? WHERE id = ?`;
   db.query(queryUpdate, [precioCompra, id], (err, result) => {
     if (err) {
       console.error("Error al actualizar:", err);
@@ -78,11 +81,10 @@ app.put("/productos/:id", (req, res) => {
   });
 });
 
-
-
-// Arrancar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+// Esperar a que MySQL esté listo y luego arrancar servidor
+waitForDb().then(() => {
+  console.log("MySQL está listo, arrancando servidor...");
+  app.listen(PORT, () => {
+    console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+  });
 });
-
-
