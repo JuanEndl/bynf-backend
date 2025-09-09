@@ -49,12 +49,11 @@ app.get("/productos", (req, res) => {
       ROUND(p.precioCompra) AS precioCompra,
       ROUND(p.precioCompra * 1.25) AS precioVenta
     FROM productos p
-      INNER JOIN animales a ON a.idAnimal = p.idAnimal
-      INNER JOIN marcas m ON m.idMarca = p.idMarca
+      LEFT JOIN animales a ON a.idAnimal = p.idAnimal
+      LEFT JOIN marcas m ON m.idMarca = p.idMarca
       LEFT JOIN edadanimal e ON e.idEdadAnimal = p.idEdadAnimal
-      INNER JOIN pesoproducto pp ON pp.idPeso = p.IdpesoProducto
-    ORDER BY p.id
-    LIMIT 400;
+      LEFT JOIN pesoproducto pp ON pp.idPeso = p.IdpesoProducto
+    ORDER BY p.id;
   `;
   db.query(query, (err, results) => {
     if (err) {
@@ -66,6 +65,8 @@ app.get("/productos", (req, res) => {
   });
 });
 
+
+// update o modificar producto
 app.put("/productos/:id", (req, res) => {
   const { id } = req.params;
   const { precioCompra } = req.body;
@@ -80,6 +81,62 @@ app.put("/productos/:id", (req, res) => {
     }
   });
 });
+
+
+// agregado de producto
+// --- Metadata para selects ---
+app.get("/metadata", (req, res) => {
+  const queries = {
+    animales: "SELECT idAnimal, animales FROM animales ORDER BY idAnimal",
+    edades: "SELECT idEdadAnimal, edadAnimal FROM edadanimal ORDER BY idEdadAnimal",
+    marcas: "SELECT idMarca, marca FROM marcas ORDER BY idMarca",
+    pesos: "SELECT idPeso, peso FROM pesoproducto ORDER BY idPeso"
+  };
+
+  const data = {};
+  const keys = Object.keys(queries);
+  let completed = 0;
+
+  keys.forEach((key) => {
+    db.query(queries[key], (err, results) => {
+      if (err) {
+        console.error(`Error al obtener ${key}:`, err);
+        return res.status(500).json({ error: `Error al obtener ${key}` });
+      }
+
+      data[key] = results;
+      completed++;
+
+      if (completed === keys.length) {
+        res.json(data);
+      }
+    });
+  });
+});
+
+// --- Insertar producto ---
+app.post("/productos", (req, res) => {
+  const { description, idMarca, idAnimal, idEdadAnimal, idPesoProducto, precioCompra } = req.body;
+
+  if (!description || !idMarca || !idAnimal || !idEdadAnimal || !idPesoProducto || !precioCompra) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios" });
+  }
+
+  const queryInsert = `
+    INSERT INTO productos (description, idMarca, idAnimal, idEdadAnimal, idPesoProducto, precioCompra)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(queryInsert, [description, idMarca, idAnimal, idEdadAnimal, idPesoProducto, precioCompra], (err, result) => {
+    if (err) {
+      console.error("Error al insertar producto:", err);
+      res.status(500).json({ error: "Error al agregar el producto" });
+    } else {
+      res.json({ mensaje: "Producto agregado correctamente", id: result.insertId });
+    }
+  });
+});
+
 
 // Esperar a que MySQL esté listo y luego arrancar servidor
 waitForDb().then(() => {
