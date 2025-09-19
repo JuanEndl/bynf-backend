@@ -43,7 +43,7 @@ app.get("/productos", (req, res) => {
   const query = `
     SELECT
       p.id,
-      CONCAT(p.description, ' ', pp.peso) AS descripcion,
+      concat(coalesce(p.description,''), ' ', coalesce(pp.peso,'')) as descripcion,
       m.marca,
       a.animales,
       ROUND(p.precioCompra) AS precioCompra,
