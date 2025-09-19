@@ -38,7 +38,7 @@ const waitForDb = () => {
   });
 };
 
-// Rutas
+// Rutas // TODO hacer el order by con por la marca en orden asendente
 app.get("/productos", (req, res) => {
   const query = `
     SELECT
