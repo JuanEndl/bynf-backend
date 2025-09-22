@@ -137,6 +137,10 @@ app.post("/productos", (req, res) => {
   });
 });
 
+// Eliminar producto TODO
+
+
+
 
 // Esperar a que MySQL esté listo y luego arrancar servidor
 waitForDb().then(() => {
