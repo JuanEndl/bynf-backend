@@ -53,7 +53,7 @@ app.get("/productos", (req, res) => {
       LEFT JOIN marcas m ON m.idMarca = p.idMarca
       LEFT JOIN edadanimal e ON e.idEdadAnimal = p.idEdadAnimal
       LEFT JOIN pesoproducto pp ON pp.idPeso = p.IdpesoProducto
-    ORDER BY p.id;
+    ORDER BY m.marca;
   `;
   db.query(query, (err, results) => {
     if (err) {
