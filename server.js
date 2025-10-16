@@ -38,7 +38,7 @@ const waitForDb = () => {
   });
 };
 
-// Rutas // TODO hacer el order by con por la marca en orden asendente
+// Rutas productos //
 app.get("/productos", (req, res) => {
   const query = `
     SELECT
@@ -137,10 +137,20 @@ app.post("/productos", (req, res) => {
   });
 });
 
-// Eliminar producto TODO
-
-
-
+// Eliminar producto TODO en progreso
+app.delete("/productos/:id", (req, res) => {
+  const { id } = req.params;
+  
+  const queryDelete = "DELETE FROM productos WHERE id = ?";
+  db.query(queryUpdate, [queryDelete, id], (err, result) => {
+    if (err) {
+      console.error("Error al actualizar:", err);
+      res.status(500).json({ error: "Error al eliminar el producto" });
+    } else {
+      res.json({ mensaje: "Producto eliminado correctamente" });
+    }
+  });
+});
 
 // Esperar a que MySQL esté listo y luego arrancar servidor
 waitForDb().then(() => {
