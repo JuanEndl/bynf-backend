@@ -142,13 +142,12 @@ app.delete("/productos/:id", (req, res) => {
   const { id } = req.params;
   
   const queryDelete = "DELETE FROM productos WHERE id = ?";
-  db.query(queryUpdate, [queryDelete, id], (err, result) => {
+  db.query(queryDelete, [id], (err, result) => {
     if (err) {
-      console.error("Error al actualizar:", err);
-      res.status(500).json({ error: "Error al eliminar el producto" });
-    } else {
-      res.json({ mensaje: "Producto eliminado correctamente" });
+      console.error("Error al eliminar:", err);
+      return res.status(500).json({ error: "Error al eliminar el producto" });
     }
+    res.json({ mensaje: "Producto eliminado correctamente" });
   });
 });
 
