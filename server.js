@@ -87,9 +87,9 @@ app.put("/productos/:id", (req, res) => {
 // --- Metadata para selects ---
 app.get("/metadata", (req, res) => {
   const queries = {
-    animales: "SELECT idAnimal, animales FROM animales ORDER BY idAnimal",
-    edades: "SELECT idEdadAnimal, edadAnimal FROM edadanimal ORDER BY idEdadAnimal",
-    marcas: "SELECT idMarca, marca FROM marcas ORDER BY idMarca",
+    animales: "SELECT idAnimal, animales FROM animales ORDER BY animales",
+    edades: "SELECT idEdadAnimal, edadAnimal FROM edadanimal ORDER BY edadanimal",
+    marcas: "SELECT idMarca, marca FROM marcas ORDER BY marca",
     pesos: "SELECT idPeso, peso FROM pesoproducto ORDER BY idPeso"
   };
 
